@@ -5,6 +5,7 @@ local node_util = require("luasnip.nodes.util")
 local types = require("luasnip.util.types")
 local tNode = require("luasnip.nodes.textNode").textNode
 local extend_decorator = require("luasnip.util.extend_decorator")
+local key_indexer = require("luasnip.nodes.key_indexer")
 
 local function F(fn, args, opts)
 	opts = opts or {}
@@ -121,10 +122,18 @@ function FunctionNode:set_dependents()
 		if rawget(arg, "type") ~= nil then
 			dict:set(vim.list_extend({ arg }, append_list), self)
 		elseif arg.absolute_insert_position then
-			-- copy, list_extend mutates.
+			-- copy absolute_insert_position, list_extend mutates.
 			dict:set(
 				vim.list_extend(
 					vim.deepcopy(arg.absolute_insert_position),
+					append_list
+				),
+				self
+			)
+		elseif key_indexer.is_key(arg) then
+			dict:set(
+				vim.list_extend(
+					{"key", arg.key},
 					append_list
 				),
 				self
