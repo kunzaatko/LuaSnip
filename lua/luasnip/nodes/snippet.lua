@@ -1278,6 +1278,11 @@ function Snippet:retrieve_all()
 	return { self }
 end
 
+function Snippet:get_keyed_node(key)
+	-- get key-node from dependents_dict.
+	return self.dependents_dict:get({"key", key, "node"})
+end
+
 return {
 	Snippet = Snippet,
 	S = S,
