@@ -48,7 +48,7 @@ function FunctionNode:update()
 		util.expand_tabs(text, util.tab_width(), #self.parent.indentstr)
 	end
 	-- don't expand tabs in parent.indentstr, use it as-is.
-	self.parent:set_text(self, util.indent(text, self.parent.indentstr))
+	self:set_text(util.indent(text, self.parent.indentstr))
 end
 
 local update_errorstring = [[
@@ -87,13 +87,13 @@ end
 function FunctionNode:update_restore()
 	-- only if args still match.
 	if self.static_text and vim.deep_equal(self:get_args(), self.last_args) then
-		self.parent:set_text(self, self.static_text)
+		self:set_text(self.static_text)
 	else
 		self:update()
 	end
 end
 
--- FunctionNode's don't have static text, nop these.
+-- FunctionNode's don't have static text, only set visibility.
 function FunctionNode:put_initial(_)
 	self.visible = true
 end
