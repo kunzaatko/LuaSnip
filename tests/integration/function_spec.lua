@@ -163,16 +163,18 @@ describe("FunctionNode", function()
 		})
 	end)
 
-	it("Updates after all argnodes become available.", function()
+	ls_helpers.check_global_node_refs("Updates after all argnodes become available.", {
+		first = {{2,2}, "second_choice"}
+	}, function()
 		local snip = [[
 			s("trig", {
 				i(1, "cccc"),
 				t" ",
 				c(2, {
 					t"aaaa",
-					i(nil, "bbbb")
+					i(nil, "bbbb", {key = "second_choice"})
 				}),
-				f(function(args) return args[1][1]..args[2][1] end, {ai[2][2], 1} )
+				f(function(args) return args[1][1]..args[2][1] end, {_luasnip_test_resolve("first"), 1} )
 			})
 		]]
 		assert.are.same(
