@@ -555,7 +555,9 @@ These references can be either of:
     grasp, but also limiting)
   - `key_indexer`: the key of the node, if it is present. This will come in
     handy if the node that is being referred to is not in the same
-    snippet/snippetNode as the one the node reference is passed to 
+    snippet/snippetNode as the one the node reference is passed to.
+    Also, it is the proper way to refer to a non-interactive node (a
+    functionNode, for example)
   - `absolute_indexer`: the absolute position of the node. Just like
     `key_indexer`, it allows addressing non-sibling nodes, but is a bit more
     awkward to handle since a path from root to node has to be determined,
@@ -954,10 +956,13 @@ While the straightforward way of addressing nodes via their
 [Jump-Index](#jump-index) suffices in most cases, a `dynamic/functionNode` can
 only depend on nodes in the same snippet(Node), its siblings (since the index is
 interpreted as relative to their parent). Accessing a node with a different
-parent is thus not possible.  
-This arbritary restriction is lifted with `key_indexer`:  
+parent is thus not possible. Secondly, and less relevant, only nodes that
+actually have a jump-index can be referred to (a `functionNode`, for example,
+cannot be depended on).  
+Both of these restrictions are lifted with `key_indexer`:  
 It allows addressing nodes by their key, which can be set when the node is
-constructed.
+constructed, and is wholly independent of the nodes' position in the snippet,
+thus enabling descriptive labeling.
 
 The following snippets demonstrate the issue and the solution by using
 `key_indexer`:
@@ -1003,8 +1008,13 @@ s("trig", {
 
 # Absolute Indexer
 
-Just as powerful as [Key Indexer](#key-indexer), but a bit more verbose (with no
-general advantages). Consider just using it instead.
+`absolute_indexer` allows accessing nodes by their unique jump-index path from
+the snippet-root. This makes it almost as powerful as [Key
+Indexer](#key-indexer), but again removes the possibility of referring to
+non-jumpable nodes and makes it all a bit more error-prone since the jump-index
+paths are hard to follow, and (unfortunately) have to be a bit verbose (see the
+long example of `absolute_indexer`-positions below). Consider just using [Key
+Indexer](#key-indexer) instead.  
 
 (The solution-snippet from [Key Indexer](#key-indexer), but using `ai` instead.)
 ```lua
