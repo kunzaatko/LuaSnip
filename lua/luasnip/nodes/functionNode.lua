@@ -50,6 +50,7 @@ function FunctionNode:update()
 	end
 	-- don't expand tabs in parent.indentstr, use it as-is.
 	self.parent:set_text(self, util.indent(text, self.parent.indentstr))
+	self:update_dependents()
 end
 
 local update_errorstring = [[

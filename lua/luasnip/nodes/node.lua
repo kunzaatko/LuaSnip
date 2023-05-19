@@ -184,9 +184,13 @@ end
 local function find_dependents(self, position_self, dict)
 	local nodes = {}
 
-	position_self[#position_self + 1] = "dependents"
-	vim.list_extend(nodes, dict:find_all(position_self, "dependent") or {})
-	position_self[#position_self] = nil
+	-- this might also be called from a node which does not possess a position!
+	-- (for example, a functionNode may be depended upon via its key)
+	if position_self then
+		position_self[#position_self + 1] = "dependents"
+		vim.list_extend(nodes, dict:find_all(position_self, "dependent") or {})
+		position_self[#position_self] = nil
+	end
 
 	vim.list_extend(
 		nodes,

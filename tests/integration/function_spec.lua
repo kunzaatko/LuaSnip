@@ -240,4 +240,46 @@ describe("FunctionNode", function()
 			{ "asdf", "\tasdf" }
 		)
 	end)
+
+	it("updates dependent nodes.", function()
+		exec_lua([[
+			ls.snip_expand(s("", {
+				i(1, "asdf"),
+				c(2, {
+					t"eeee",
+					f(function(args)
+						return args[1]
+					end, {1}, {key = "fnode1"}),
+				}),
+				c(3, {
+					t"bbbb",
+					f(function(args)
+						return args[1]
+					end, k("fnode1"))
+				})
+			}))
+		]])
+		exec_lua("ls.jump(1) ls.change_choice(1)")
+		screen:expect{grid=[[
+			asdf^asdfbbbb                                      |
+			{0:~                                                 }|
+			{2:-- INSERT --}                                      |]]}
+		exec_lua("ls.jump(1) ls.change_choice(1)")
+		screen:expect{grid=[[
+			asdfasdf^asdf                                      |
+			{0:~                                                 }|
+			{2:-- INSERT --}                                      |]]}
+		exec_lua("ls.jump(-1) ls.change_choice(1) ls.jump(-1)")
+		feed("1234")
+		exec_lua("ls.jump(1)")
+		screen:expect{grid=[[
+			1234^eeeeasdf                                      |
+			{0:~                                                 }|
+			{2:-- INSERT --}                                      |]]}
+		exec_lua("ls.change_choice(1)")
+		screen:expect{grid=[[
+			1234^12341234                                      |
+			{0:~                                                 }|
+			{2:-- INSERT --}                                      |]]}
+	end)
 end)
